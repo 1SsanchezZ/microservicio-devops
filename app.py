@@ -8,21 +8,14 @@ def home():
 
 @app.route('/health')
 def health():
-    return jsonify({"status": "ok", "version": "1.0"})
+    return jsonify({"status": "ok"})
+
+@app.route('/usuarios')
+def usuarios():
+    return jsonify({"usuarios": ["Juan", "María", "Pedro"]})
 
 @app.route('/saludo')
 def saludo():
     return jsonify({"mensaje": "Hola desde el microservicio!"})
 
-@app.route('/usuarios')
-def usuarios():
-    return jsonify({"usuarios": ["Juan", "Maria", "Pedro"]})
-
-hotfix/fix-error-404
-@app.errorhandler(404)
-def not_found(e):
-    return jsonify({"error": "Ruta no encontrada"}), 404
-
-main
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == '__main__':    app.run(debug=True)
