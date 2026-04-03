@@ -18,5 +18,11 @@ def saludo():
 def usuarios():
     return jsonify({"usuarios": ["Juan", "Maria", "Pedro"]})
 
+hotfix/fix-error-404
+@app.errorhandler(404)
+def not_found(e):
+    return jsonify({"error": "Ruta no encontrada"}), 404
+
+main
 if __name__ == '__main__':
     app.run(debug=True)
