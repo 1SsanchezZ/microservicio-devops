@@ -8,20 +8,15 @@ def home():
 
 @app.route('/health')
 def health():
-    return jsonify({"status": "ok"})
+    return jsonify({"status": "ok", "version": "1.0"})
 
-feature/saludo
 @app.route('/saludo')
 def saludo():
     return jsonify({"mensaje": "Hola desde el microservicio!"})
 
-if __name__ == '__main__':
-    app.run(debug=True)
-    
 @app.route('/usuarios')
 def usuarios():
-    return jsonify({"usuarios": ["Juan", "María", "Pedro"]})
+    return jsonify({"usuarios": ["Juan", "Maria", "Pedro"]})
 
 if __name__ == '__main__':
     app.run(debug=True)
-    main
