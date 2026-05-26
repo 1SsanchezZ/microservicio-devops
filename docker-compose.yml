@@ -1,0 +1,18 @@
+services:
+  microservicio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: microservicio-devops-compose
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 256M
+        reservations:
+          cpus: "0.25"
+          memory: 128M
+          
