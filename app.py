@@ -1,10 +1,10 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 
 app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return jsonify({"mensaje": "Microservicio funcionando"})
+    return render_template("index.html")
 
 @app.route('/health')
 def health():

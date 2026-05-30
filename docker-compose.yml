@@ -6,7 +6,12 @@ services:
     container_name: microservicio-devops-compose
     ports:
       - "5000:5000"
+
+    volumes:
+      - .:/app
+
     restart: unless-stopped
+
     deploy:
       resources:
         limits:
@@ -15,4 +20,3 @@ services:
         reservations:
           cpus: "0.25"
           memory: 128M
-          

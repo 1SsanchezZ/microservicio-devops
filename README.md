@@ -265,6 +265,23 @@ Se utilizó inteligencia artificial únicamente como apoyo para:
 
 Todas las decisiones técnicas, configuraciones y validaciones fueron realizadas y verificadas por los integrantes del equipo.
 
+Capturas:
+
+### Branches del repositorio
+
+![Branches](capturas/branches.png)
+
+### Commits y trazabilidad
+
+![Commits](capturas/commits.png)
+
+### Pipeline CI/CD en GitHub Actions
+
+![Actions](capturas/actions.png)
+
+### Microservicio funcionando en localhost
+
+![Localhost](capturas/localhost.png)
 
 # Conclusiones
 
