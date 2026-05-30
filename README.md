@@ -42,27 +42,27 @@ Se eligió **GitFlow** porque permite separar claramente el código estable del 
 
 # Ramas utilizadas
 
-| Rama                        | Descripción                           |
-| --------------------------- | ------------------------------------- |
-| main                        | Código estable                        |
-| develop                     | Integración de nuevas funcionalidades |
-| feature/health              | Desarrollo de endpoints               |
-| hotfix/fix-error-404        | Corrección de errores                 |
-| dependabot/pip/flask-3.1.3  | Actualización automática              |
-| dependabot/pip/pytest-9.0.3 | Actualización automática              |
+| Rama | Descripción |
+|--------|-------------|
+| `main` | Código estable |
+| `develop` | Integración de nuevas funcionalidades |
+| `feature/health` | Desarrollo de endpoints |
+| `hotfix/fix-error-404` | Corrección de errores |
+| `dependabot/pip/flask-3.1.3` | Actualización automática de Flask |
+| `dependabot/pip/pytest-9.0.3` | Actualización automática de PyTest |
 
 # Convenciones de commits
 
 Se utiliza el estándar **Conventional Commits**.
 
-| Prefijo   | Uso                   |
-| --------- | --------------------- |
-| feat:     | Nueva funcionalidad   |
-| fix:      | Corrección de errores |
-| docs:     | Documentación         |
-| ci:       | Configuración CI/CD   |
-| test:     | Pruebas automatizadas |
-| refactor: | Mejora interna        |
+| Prefijo | Uso |
+|----------|-----|
+| `feat:` | Nueva funcionalidad |
+| `fix:` | Corrección de errores |
+| `docs:` | Documentación |
+| `ci:` | Configuración CI/CD |
+| `test:` | Pruebas automatizadas |
+| `refactor:` | Mejora interna |
 
 Ejemplo:
 
@@ -112,12 +112,12 @@ microservicio-devops/
 
 # Endpoints disponibles
 
-| Endpoint  | Descripción         |
-| --------- | ------------------- |
-| /         | Página principal    |
-| /health   | Estado del servicio |
-| /usuarios | Lista de usuarios   |
-| /saludo   | Mensaje de saludo   |
+| Endpoint | Descripción |
+|-----------|------------|
+| `/` | Página principal del microservicio |
+| `/health` | Estado del servicio |
+| `/usuarios` | Lista de usuarios |
+| `/saludo` | Mensaje de saludo |
 
 
 # Docker
@@ -221,10 +221,10 @@ Esto permite mantener las dependencias actualizadas y mejorar la seguridad del p
 
 Trivy fue integrado dentro del pipeline para realizar análisis de vulnerabilidades sobre la imagen Docker generada.
 
-La configuración utilizada fue:
+La configuración actual utilizada en Trivy es:
 
 ```yaml
-exit-code: '1'
+exit-code: '0'
 severity: CRITICAL,HIGH
 ```
 
