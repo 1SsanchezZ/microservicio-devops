@@ -65,8 +65,8 @@ jobs:
           format: table
           exit-code: '1'
           severity: CRITICAL
-          trivyignore: .trivyignore  
-
+          ignore-unfixed: 'true' 
+          
   deploy_simulated:
     name: Despliegue Automatizado (Entorno Simulado)
     runs-on: ubuntu-latest
