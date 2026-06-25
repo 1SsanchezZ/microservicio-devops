@@ -28,8 +28,11 @@ jobs:
       - name: Instalar dependencias
         run: pip install -r requirements.txt
 
+      - name: Instalar PyTest explícitamente
+        run: pip install pytest
+
       - name: Ejecutar pruebas con PyTest
-        run: python -m pytest
+        run: python -m pytest .
 
   docker:
     name: Construir imagen Docker
@@ -60,5 +63,27 @@ jobs:
         with:
           image-ref: microservicio-devops
           format: table
-          exit-code: '0'
+          exit-code: '1' 
           severity: CRITICAL,HIGH
+
+  deploy_simulated:
+    name: Despliegue Automatizado (Entorno Simulado)
+    runs-on: ubuntu-latest
+    needs: security
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v3
+
+      - name: Levantar entorno con Docker Compose
+        run: docker compose up -d --build
+
+      - name: Verificar disponibilidad del microservicio (Healthcheck)
+        run: |
+          echo "Esperando a que el contenedor inicie de forma segura..."
+          sleep 5
+          curl --fail http://localhost:5000/health || exit 1
+          echo "¡Despliegue simulado exitoso! El microservicio responde correctamente."
+
+      - name: Apagar entorno simulado
+        if: always()
+        run: docker compose down
