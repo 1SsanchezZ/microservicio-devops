@@ -85,48 +85,49 @@ deploy:
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: root
+          username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           script_stop: true
           script: |
             echo "--- Verificando estado de Docker en AWS ---"
             if ! command -v docker &> /dev/null; then
-              dnf update -y
-              dnf install docker -y
-              systemctl start docker
-              systemctl enable docker
+              sudo dnf update -y
+              sudo dnf install docker -y
+              sudo systemctl start docker
+              sudo systemctl enable docker
+              sudo usermod -aG docker ec2-user
             fi
             
             echo "--- Limpiando contenedores antiguos para liberar el puerto 5000 ---"
-            docker stop mi-app-flask || true
-            docker rm mi-app-flask || true
+            sudo docker stop mi-app-flask || true
+            sudo docker rm mi-app-flask || true
 
       - name: Transferir Archivo Tar al Servidor de AWS
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: root
+          username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "microservicio.tar"
-          target: "/root/"
+          target: "/home/ec2-user/"
 
       - name: Cargar Imagen y Levantar Contenedor en AWS
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: root
+          username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           script_stop: true
           script: |
             echo "--- Cargando la nueva imagen Docker ---"
-            docker load -i /root/microservicio.tar
-            rm -f /root/microservicio.tar
+            sudo docker load -i /home/ec2-user/microservicio.tar
+            rm -f /home/ec2-user/microservicio.tar
             
             echo "--- Iniciando el microservicio en el puerto 5000 ---"
-            docker run -d -p 5000:5000 --name mi-app-flask microservicio-devops:latest
+            sudo docker run -d -p 5000:5000 --name mi-app-flask microservicio-devops:latest
             
             echo "--- Validando disponibilidad del servicio ---"
             sleep 5
-            docker ps
+            sudo docker ps
             curl --fail http://localhost:5000/health || exit 1
             
