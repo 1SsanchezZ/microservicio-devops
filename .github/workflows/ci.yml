@@ -130,4 +130,3 @@ deploy:
             sleep 5
             sudo docker ps
             curl --fail http://localhost:5000/health || exit 1
-            
