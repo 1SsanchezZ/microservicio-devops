@@ -5,7 +5,6 @@ on:
     branches:
       - main
       - develop
-
   pull_request:
     branches:
       - main
@@ -65,26 +64,70 @@ jobs:
           format: table
           exit-code: '1'
           severity: CRITICAL
-          ignore-unfixed: 'true' 
-          
-  deploy_simulated:
-    name: Despliegue Automatizado (Entorno Simulado)
+          ignore-unfixed: 'true'
+
+  deploy:
+    name: Despliegue Continuo en AWS EC2 Real
     runs-on: ubuntu-latest
-    needs: security
+    needs: security # Si Trivy falla (exit-code '1'), el despliegue nunca se ejecuta (Cumple IE6)
+
     steps:
       - name: Descargar repositorio
         uses: actions/checkout@v3
 
-      - name: Levantar entorno con Docker Compose
-        run: docker compose up -d --build
+      - name: Compilar Imagen de Producción
+        run: docker build -t microservicio-devops:latest .
 
-      - name: Verificar disponibilidad del microservicio (Healthcheck)
-        run: |
-          echo "Esperando a que el contenedor inicie de forma segura..."
-          sleep 5
-          curl --fail http://localhost:5000/health || exit 1
-          echo "¡Despliegue simulado exitoso! El microservicio responde correctamente."
+      - name: Empaquetar Imagen a Archivo Comprimido
+        run: docker save -o microservicio.tar microservicio-devops:latest
 
-      - name: Apagar entorno simulado
-        if: always()
-        run: docker compose down
+      - name: Instalar Docker y Preparar Servidor Remoto EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script_stop: true
+          script: |
+            echo "--- Verificando estado de Docker en AWS ---"
+            if ! command -v docker &> /dev/null; then
+              sudo yum update -y
+              sudo yum install docker -y
+              sudo systemctl start docker
+              sudo systemctl enable docker
+              sudo usermod -aG docker ec2-user
+            fi
+            
+            echo "--- Limpiando contenedores antiguos para liberar el puerto 5000 ---"
+            docker stop mi-app-flask || true
+            docker rm mi-app-flask || true
+
+      - name: Transferir Archivo Tar al Servidor de AWS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "microservicio.tar"
+          target: "/home/ec2-user/"
+
+      - name: Cargar Imagen y Levantar Contenedor en AWS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script_stop: true
+          script: |
+            echo "--- Cargando la nueva imagen Docker ---"
+            docker load -i /home/ec2-user/microservicio.tar
+            rm -f /home/ec2-user/microservicio.tar
+            
+            echo "--- Iniciando el microservicio en el puerto 5000 ---"
+            docker run -d -p 5000:5000 --name mi-app-flask microservicio-devops:latest
+            
+            echo "--- Validando disponibilidad del servicio ---"
+            sleep 5
+            docker ps
+            curl --fail http://localhost:5000/health || exit 1
+            
