@@ -66,10 +66,10 @@ jobs:
           severity: CRITICAL
           ignore-unfixed: 'true'
 
-  deploy:
+deploy:
     name: Despliegue Continuo en AWS EC2 Real
     runs-on: ubuntu-latest
-    needs: security # Si Trivy falla (exit-code '1'), el despliegue nunca se ejecuta (Cumple IE6)
+    needs: security
 
     steps:
       - name: Descargar repositorio
@@ -85,17 +85,16 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ec2-user
+          username: root
           key: ${{ secrets.EC2_SSH_KEY }}
           script_stop: true
           script: |
             echo "--- Verificando estado de Docker en AWS ---"
             if ! command -v docker &> /dev/null; then
-              sudo yum update -y
-              sudo yum install docker -y
-              sudo systemctl start docker
-              sudo systemctl enable docker
-              sudo usermod -aG docker ec2-user
+              dnf update -y
+              dnf install docker -y
+              systemctl start docker
+              systemctl enable docker
             fi
             
             echo "--- Limpiando contenedores antiguos para liberar el puerto 5000 ---"
@@ -106,22 +105,22 @@ jobs:
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ec2-user
+          username: root
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "microservicio.tar"
-          target: "/home/ec2-user/"
+          target: "/root/"
 
       - name: Cargar Imagen y Levantar Contenedor en AWS
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ec2-user
+          username: root
           key: ${{ secrets.EC2_SSH_KEY }}
           script_stop: true
           script: |
             echo "--- Cargando la nueva imagen Docker ---"
-            docker load -i /home/ec2-user/microservicio.tar
-            rm -f /home/ec2-user/microservicio.tar
+            docker load -i /root/microservicio.tar
+            rm -f /root/microservicio.tar
             
             echo "--- Iniciando el microservicio en el puerto 5000 ---"
             docker run -d -p 5000:5000 --name mi-app-flask microservicio-devops:latest
