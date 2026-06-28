@@ -28,14 +28,15 @@ jobs:
       - name: Instalar dependencias
         run: pip install -r requirements.txt
 
+      - name: Instalar PyTest explícitamente
+        run: pip install pytest
+
       - name: Ejecutar pruebas con PyTest
         run: python -m pytest
-
   docker:
     name: Construir imagen Docker
     runs-on: ubuntu-latest
     needs: test
-
     steps:
       - name: Descargar repositorio
         uses: actions/checkout@v3
@@ -47,18 +48,69 @@ jobs:
     name: Escaneo de seguridad con Trivy
     runs-on: ubuntu-latest
     needs: docker
-
     steps:
       - name: Descargar repositorio
         uses: actions/checkout@v3
 
       - name: Construir imagen Docker
         run: docker build -t microservicio-devops .
-
+      
       - name: Escanear imagen Docker
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: microservicio-devops
           format: table
-          exit-code: '0'
-          severity: CRITICAL,HIGH
+          exit-code: '1'
+          severity: CRITICAL
+          ignore-unfixed: 'true'
+
+deploy:
+  name: Despliegue Continuo en AWS EC2
+  runs-on: ubuntu-latest
+  needs: security
+
+  steps:
+    - name: Desplegar en EC2
+      uses: appleboy/ssh-action@v1.2.0
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ec2-user
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script_stop: true
+        script: |
+          set -e
+
+          sudo systemctl start docker
+          sudo systemctl enable docker
+
+          cd /home/ec2-user
+
+          if [ ! -d microservicio-devops ]; then
+            git clone https://github.com/1SsanchezZ/microservicio-devops.git
+          fi
+
+          cd microservicio-devops
+
+          git fetch origin
+          git reset --hard origin/main
+
+          sudo docker stop mi-app-flask || true
+          sudo docker rm mi-app-flask || true
+
+          sudo docker build -t microservicio-devops:latest .
+
+          sudo docker run -d \
+            --restart unless-stopped \
+            --name mi-app-flask \
+            -p 5000:5000 \
+            microservicio-devops:latest
+
+          sleep 5
+
+          echo "=== Contenedores ==="
+          sudo docker ps
+
+          echo "=== Últimos logs ==="
+          sudo docker logs mi-app-flask --tail 20
+
+          curl --fail http://localhost:5000/health
