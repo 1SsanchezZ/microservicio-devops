@@ -1,102 +1,131 @@
 # Microservicio DevOps
 
-**Evaluación Parcial 2 - Ingeniería DevOps**
+**Evaluación Parcial 3 – Ingeniería DevOps**
 
-## Descripción del proyecto
-Este repositorio contiene un microservicio desarrollado con **Flask** que fue utilizado como base para implementar prácticas DevOps modernas. Durante el desarrollo se integraron herramientas de control de versiones, automatización, pruebas, contenerización, seguridad y orquestación.
+---
 
-El objetivo principal fue construir un flujo de trabajo que permitiera automatizar la validación y ejecución del proyecto utilizando Docker, GitHub Actions y herramientas de seguridad, siguiendo los principios de CI/CD y DevSecOps.
+# Descripción del proyecto
+
+Este repositorio contiene el desarrollo de un microservicio implementado con **Python** y **Flask**, utilizado como base para aplicar e integrar prácticas modernas de **DevOps** y **DevSecOps**. A lo largo del proyecto se diseñó e implementó un flujo de trabajo automatizado que permitió validar, construir, analizar y desplegar la aplicación utilizando herramientas ampliamente utilizadas en la industria.
+
+Durante la evaluación se implementó un proceso de **Integración Continua (CI)** mediante **GitHub Actions**, el cual ejecuta automáticamente pruebas unitarias con **PyTest**, construye una imagen Docker y realiza un análisis de vulnerabilidades utilizando **Trivy** antes de permitir el despliegue de la aplicación.
+
+Posteriormente, se implementó un proceso de **Despliegue Continuo (CD)** hacia una instancia **Amazon EC2**, donde el pipeline se conecta de forma segura mediante **SSH**, actualiza el repositorio del proyecto, reconstruye la imagen Docker y despliega automáticamente una nueva versión del microservicio dentro de un contenedor.
+
+Como complemento al proceso de despliegue, se configuró el servicio **Amazon CloudWatch** para monitorear el estado de la infraestructura, recopilando métricas de utilización de CPU, memoria y almacenamiento mediante el **CloudWatch Agent**, permitiendo supervisar el comportamiento del servidor en tiempo real.
+
+El resultado corresponde a un entorno completamente automatizado que integra control de versiones, pruebas, contenerización, análisis de seguridad, despliegue continuo y monitoreo de infraestructura, siguiendo las buenas prácticas propuestas por la cultura DevOps.
+
+---
 
 # Tecnologías utilizadas
 
-* Python 3
-* Flask
-* Docker
-* Docker Compose
-* Git
-* GitHub
-* GitHub Actions
-* PyTest
-* Dependabot
-* Trivy
+| Tecnología | Descripción |
+|------------|-------------|
+| Python 3.11 | Lenguaje de programación utilizado para desarrollar el microservicio. |
+| Flask | Framework utilizado para la construcción del microservicio y la interfaz web. |
+| Docker | Contenerización del microservicio para garantizar portabilidad y consistencia entre ambientes. |
+| Git | Sistema de control de versiones distribuido. |
+| GitHub | Plataforma utilizada para alojar y gestionar el repositorio del proyecto. |
+| GitHub Actions | Automatización del pipeline de Integración Continua y Despliegue Continuo (CI/CD). |
+| PyTest | Framework utilizado para la ejecución de pruebas unitarias automatizadas. |
+| Trivy | Herramienta utilizada para el análisis de vulnerabilidades de la imagen Docker. |
+| Amazon EC2 | Servicio de AWS utilizado para alojar el microservicio en un entorno de producción. |
+| Amazon CloudWatch | Plataforma de monitoreo utilizada para visualizar métricas de la infraestructura. |
+| Amazon CloudWatch Agent | Agente instalado en la instancia EC2 para recopilar métricas de CPU, memoria y disco. |
+| SSH | Protocolo utilizado para realizar el despliegue remoto desde GitHub Actions hacia la instancia EC2. |
 
 # Estrategia de ramificación
 
-Para este proyecto se evaluaron tres modelos de ramificación:
+Durante el desarrollo del proyecto se evaluaron diferentes estrategias de ramificación para gestionar el código fuente y facilitar el trabajo colaborativo. Entre las metodologías analizadas se encuentran GitFlow, GitHub Flow y Trunk-Based Development.
 
 ## GitFlow
 
-Modelo estructurado que utiliza ramas dedicadas para cada etapa del desarrollo: main, develop, feature, hotfix y release.
+GitFlow es un modelo de trabajo que organiza el desarrollo mediante ramas con propósitos específicos, permitiendo separar el código estable del código en desarrollo. Este modelo facilita la integración de nuevas funcionalidades, la corrección de errores y la preparación de nuevas versiones del software.
 
 ## GitHub Flow
 
-Modelo simplificado basado en una rama principal y ramas de características.
+GitHub Flow propone un flujo de trabajo más simple, basado en una rama principal (`main`) y ramas temporales para desarrollar nuevas funcionalidades antes de integrarlas mediante Pull Requests.
 
 ## Trunk-Based Development
 
-Modelo donde todos los desarrolladores integran cambios directamente sobre una rama principal.
+Trunk-Based Development consiste en integrar continuamente los cambios directamente sobre una rama principal, promoviendo ciclos de desarrollo cortos y una integración constante.
 
-## Justificación de elección
+## Justificación de la estrategia seleccionada
 
-Se eligió **GitFlow** porque permite separar claramente el código estable del código en desarrollo, facilitando la colaboración entre integrantes del equipo y manteniendo una correcta trazabilidad de los cambios realizados.
+Para este proyecto se seleccionó **GitFlow**, ya que permitió mantener una separación clara entre el código en desarrollo y el código listo para producción. Esta estrategia facilitó la implementación del pipeline de Integración Continua y Despliegue Continuo (CI/CD), permitiendo validar automáticamente cada cambio antes de su despliegue hacia la instancia Amazon EC2.
+
+Asimismo, GitFlow proporcionó una mejor organización del desarrollo, simplificando la incorporación de nuevas funcionalidades, la corrección de errores y el mantenimiento del historial de cambios mediante commits estructurados.
 
 # Ramas utilizadas
 
-| Rama | Descripción |
-|--------|-------------|
-| `main` | Código estable |
-| `develop` | Integración de nuevas funcionalidades |
-| `feature/health` | Desarrollo de endpoints |
-| `hotfix/fix-error-404` | Corrección de errores |
-| `dependabot/pip/flask-3.1.3` | Actualización automática de Flask |
-| `dependabot/pip/pytest-9.0.3` | Actualización automática de PyTest |
+Durante el desarrollo del proyecto se utilizaron las siguientes ramas:
 
-# Convenciones de commits
+| Rama | Propósito |
+|-------|-----------|
+| `main` | Contiene la versión estable del proyecto y es utilizada para el despliegue automático en Amazon EC2. |
+| `develop` | Rama destinada a la integración y validación de nuevas funcionalidades antes de incorporarlas a la rama principal. |
 
-Se utiliza el estándar **Conventional Commits**.
+El desarrollo consistió en implementar mejoras progresivas sobre la rama `develop`, las cuales posteriormente fueron integradas en `main` una vez verificadas mediante pruebas automatizadas y el pipeline de GitHub Actions.
 
-| Prefijo | Uso |
-|----------|-----|
-| `feat:` | Nueva funcionalidad |
-| `fix:` | Corrección de errores |
-| `docs:` | Documentación |
-| `ci:` | Configuración CI/CD |
-| `test:` | Pruebas automatizadas |
-| `refactor:` | Mejora interna |
+# Convención de commits
 
-Ejemplo:
+Para mantener un historial de cambios claro y comprensible se utilizó el estándar **Conventional Commits**, permitiendo identificar rápidamente el propósito de cada modificación realizada durante el proyecto.
+
+| Prefijo | Descripción |
+|----------|-------------|
+| `feat:` | Incorporación de nuevas funcionalidades. |
+| `fix:` | Corrección de errores o fallas detectadas. |
+| `docs:` | Actualización de la documentación del proyecto. |
+| `ci:` | Cambios relacionados con el pipeline de Integración Continua y Despliegue Continuo. |
+| `test:` | Incorporación o modificación de pruebas automatizadas. |
+| `refactor:` | Reestructuración interna del código sin modificar su funcionamiento. |
+
+### Ejemplos de commits utilizados durante el proyecto
 
 ```text
-feat: agregar orquestación con Docker Compose
+feat: agregar interfaz web al microservicio
+
+test: actualizar pruebas para endpoint HTML
+
+ci: permitir reporte de vulnerabilidades sin bloquear pipeline
+
+docs: actualizar documentación final del proyecto
+
+refactor: optimizar despliegue automático en Amazon EC2
 ```
 
 # Flujo de trabajo colaborativo
 
-```bash
-git clone https://github.com/1SsanchezZ/microservicio-devops
+El desarrollo del proyecto se realizó siguiendo la estrategia **GitFlow**, utilizando las ramas `develop` y `main` como base del proceso de integración y despliegue.
 
-git checkout -b feature/nueva-funcionalidad
+El flujo de trabajo utilizado fue el siguiente:
+
+```bash
+git clone https://github.com/1SsanchezZ/microservicio-devops.git
+
+git checkout develop
 
 git add .
-git commit -m "feat: descripción"
 
-git push origin feature/nueva-funcionalidad
+git commit -m "feat: descripción del cambio"
+
+git push origin develop
+
 ```
 
-Posteriormente se crea un Pull Request para revisión y aprobación antes de realizar el merge.
+Una vez que los cambios son incorporados a la rama **main**, el pipeline de **GitHub Actions** ejecuta automáticamente las pruebas unitarias, construye la imagen Docker, realiza el análisis de vulnerabilidades con **Trivy** y despliega la aplicación en la instancia **Amazon EC2**.
 
+---
 
 # Estructura del proyecto
 
 ```text
 microservicio-devops/
 │
-├── app.py
-├── requirements.txt
-├── Dockerfile
-├── docker-compose.yml
-├── README.md
-├── .gitignore
+├── .github/
+│   └── workflows/
+│       └── ci.yml
 │
 ├── templates/
 │   └── index.html
@@ -104,191 +133,359 @@ microservicio-devops/
 ├── tests/
 │   └── test_app.py
 │
-└── .github/
-    ├── dependabot.yml
-    └── workflows/
-        └── ci.yml
+├── app.py
+├── Dockerfile
+├── requirements.txt
+├── README.md
+└── .gitignore
 ```
+
+## Descripción de los archivos principales
+
+| Archivo o carpeta | Descripción |
+|-------------------|-------------|
+| `app.py` | Contiene la lógica principal del microservicio desarrollado con Flask. |
+| `Dockerfile` | Define el proceso de construcción de la imagen Docker del proyecto. |
+| `requirements.txt` | Lista las dependencias necesarias para ejecutar la aplicación. |
+| `tests/` | Contiene las pruebas unitarias ejecutadas automáticamente mediante PyTest. |
+| `templates/` | Incluye las plantillas HTML utilizadas por la aplicación web. |
+| `.github/workflows/ci.yml` | Define el pipeline de Integración Continua y Despliegue Continuo (CI/CD) mediante GitHub Actions. |
+| `README.md` | Documentación completa del proyecto. |
+| `.gitignore` | Especifica los archivos y carpetas que no deben incorporarse al repositorio Git. |
+
+---
 
 # Endpoints disponibles
 
-| Endpoint | Descripción |
-|-----------|------------|
-| `/` | Página principal del microservicio |
-| `/health` | Estado del servicio |
-| `/usuarios` | Lista de usuarios |
-| `/saludo` | Mensaje de saludo |
+El microservicio expone los siguientes endpoints para validar su funcionamiento y entregar información al usuario:
 
+| Endpoint | Método | Descripción |
+|-----------|--------|-------------|
+| `/` | GET | Muestra la página principal del microservicio desarrollada con Flask. |
+| `/health` | GET | Permite verificar el estado del servicio, utilizado por el pipeline para validar el despliegue. |
+| `/usuarios` | GET | Devuelve una lista de usuarios en formato JSON. |
+| `/saludo` | GET | Retorna un mensaje de bienvenida desde el microservicio en formato JSON. |
 
 # Docker
 
-Docker fue utilizado para contenerizar el microservicio, permitiendo ejecutar la aplicación de manera consistente en distintos entornos.
+Docker fue utilizado para contenerizar el microservicio, permitiendo ejecutar la aplicación en un entorno aislado, portátil y consistente. La utilización de contenedores asegura que el comportamiento del sistema sea el mismo tanto durante el desarrollo como en el servidor de producción desplegado en Amazon EC2.
 
-## Construcción de imagen
+El proceso de despliegue implementado en GitHub Actions reconstruye automáticamente la imagen Docker cada vez que se integran cambios en la rama principal del repositorio.
+
+## Construcción de la imagen
+
+Para generar la imagen Docker del proyecto se utiliza el siguiente comando:
 
 ```bash
-docker build -t microservicio-devops .
+docker build -t microservicio-devops:latest .
 ```
+
+Este proceso instala las dependencias definidas en `requirements.txt`, copia el código fuente al contenedor y configura la aplicación Flask para ejecutarse en el puerto **5000**.
+
+---
+
 ## Ejecución del contenedor
 
-```bash
-docker run --name microservicio-devops -d -p 5000:5000 microservicio-devops
-```
-
-# Docker Compose
-
-Docker Compose fue utilizado para orquestar el servicio localmente.
-
-## Levantar el servicio
+Una vez construida la imagen, el microservicio puede iniciarse mediante:
 
 ```bash
-docker compose up -d --build
+docker run -d \
+  --name mi-app-flask \
+  -p 5000:5000 \
+  microservicio-devops:latest
 ```
 
-## Detener el servicio
+Durante el despliegue automático en Amazon EC2, GitHub Actions elimina cualquier contenedor anterior, reconstruye la imagen e inicia una nueva instancia del microservicio, garantizando que siempre se encuentre ejecutando la versión más reciente del código.
 
-```bash
-docker compose down
-```
-
-## Sincronización automática de cambios
-
-Se configuró un volumen Docker:
-
-```yaml
-volumes:
-  - .:/app
-```
-
-Esto permite que cualquier cambio realizado localmente se refleje automáticamente dentro del contenedor durante el desarrollo.
+---
 
 # Pruebas automatizadas con PyTest
 
-Se implementaron pruebas unitarias para validar el correcto funcionamiento de los endpoints principales.
+Con el objetivo de verificar el correcto funcionamiento del microservicio antes de cada despliegue, se implementaron pruebas unitarias utilizando **PyTest**. Estas pruebas forman parte del pipeline de Integración Continua y son ejecutadas automáticamente por GitHub Actions en cada actualización del repositorio.
 
-## Ejecutar pruebas
+## Ejecutar las pruebas localmente
 
 ```bash
 python -m pytest
 ```
 
-Resultado esperado:
+Si todas las pruebas son exitosas, se obtiene un resultado similar al siguiente:
 
 ```text
-4 passed
+============================= test session starts =============================
+collected 4 items
+
+tests/test_app.py ....                                         [100%]
+
+============================== 4 passed ==============================
 ```
 
-Las pruebas permiten detectar errores tempranamente y aumentar la calidad del software.
+Las pruebas validan el comportamiento de los principales endpoints del microservicio, asegurando que las respuestas sean correctas antes de construir la imagen Docker y continuar con el proceso de despliegue.
+
+## Endpoints validados mediante PyTest
+
+Las pruebas automatizadas verifican el correcto funcionamiento de los siguientes endpoints:
+
+| Endpoint | Validación realizada |
+|-----------|----------------------|
+| `/` | Comprueba que la página principal responde correctamente. |
+| `/health` | Verifica que el servicio se encuentre disponible y retorne un estado **OK**. |
+| `/usuarios` | Confirma la respuesta en formato JSON con la lista de usuarios. |
+| `/saludo` | Valida el mensaje de bienvenida entregado por el microservicio. |
+
+La incorporación de pruebas automatizadas permitió detectar errores tempranamente, mejorar la calidad del software y asegurar que únicamente versiones funcionales fueran desplegadas en el entorno de producción.
 
 # GitHub Actions y CI/CD
 
-## ¿Qué es CI/CD?
+## Integración Continua y Despliegue Continuo (CI/CD)
 
-CI/CD significa Integración Continua y Entrega Continua.
+Uno de los principales objetivos del proyecto fue implementar un proceso automatizado de **Integración Continua (Continuous Integration)** y **Despliegue Continuo (Continuous Deployment)** utilizando **GitHub Actions**.
 
-### CI (Continuous Integration)
+Gracias a este pipeline, cada modificación realizada sobre el repositorio es validada automáticamente antes de ser desplegada, reduciendo errores manuales y asegurando que únicamente versiones funcionales lleguen al entorno de producción.
 
-Automatiza la validación del código cada vez que se realiza un cambio en el repositorio.
+---
 
-### CD (Continuous Delivery)
+## Continuous Integration (CI)
 
-Automatiza la preparación del software para su despliegue.
+La etapa de Integración Continua se ejecuta automáticamente cada vez que ocurre alguno de los siguientes eventos:
+
+- Push sobre la rama `main`.
+- Push sobre la rama `develop`.
+- Creación o actualización de un Pull Request.
+
+Durante esta etapa el pipeline realiza las siguientes tareas:
+
+1. Descarga el código fuente desde GitHub.
+2. Configura el entorno de ejecución con Python 3.11.
+3. Instala las dependencias del proyecto.
+4. Ejecuta las pruebas unitarias mediante PyTest.
+5. Construye la imagen Docker del microservicio.
+6. Ejecuta un análisis de seguridad utilizando Trivy.
+
+Si alguna de estas etapas falla, el pipeline se detiene automáticamente, evitando que código con errores continúe hacia producción.
+
+---
+
+## Continuous Deployment (CD)
+
+Una vez completadas correctamente todas las etapas de validación, GitHub Actions inicia automáticamente el proceso de despliegue hacia una instancia **Amazon EC2**.
+
+Durante esta etapa el pipeline realiza las siguientes acciones:
+
+1. Se conecta a la instancia EC2 mediante SSH.
+2. Verifica que Docker se encuentre disponible.
+3. Actualiza el repositorio con la versión más reciente desde GitHub.
+4. Detiene y elimina el contenedor anterior si existe.
+5. Reconstruye la imagen Docker utilizando el código actualizado.
+6. Inicia un nuevo contenedor con la versión más reciente del microservicio.
+7. Ejecuta una validación automática consultando el endpoint `/health` para comprobar que el servicio quedó operativo.
+
+Este proceso permite realizar despliegues automáticos sin intervención manual, garantizando que el servidor siempre ejecute la última versión estable del proyecto.
+
+---
 
 # Pipeline implementado
 
-El pipeline configurado en GitHub Actions realiza automáticamente:
+El flujo completo del pipeline desarrollado en GitHub Actions es el siguiente:
 
-1. Instalación de dependencias.
-2. Ejecución de pruebas con PyTest.
-3. Construcción de imagen Docker.
-4. Escaneo de seguridad con Trivy.
+```text
+Push / Pull Request
+        │
+        ▼
+Checkout del repositorio
+        │
+        ▼
+Configuración de Python
+        │
+        ▼
+Instalación de dependencias
+        │
+        ▼
+Pruebas unitarias (PyTest)
+        │
+        ▼
+Construcción de imagen Docker
+        │
+        ▼
+Escaneo de seguridad (Trivy)
+        │
+        ▼
+Conexión mediante SSH a Amazon EC2
+        │
+        ▼
+Actualización del repositorio
+        │
+        ▼
+Construcción de nueva imagen Docker
+        │
+        ▼
+Inicio del contenedor
+        │
+        ▼
+Validación mediante /health
+```
 
-El pipeline se ejecuta automáticamente ante:
-
-* Push a main.
-* Push a develop.
-* Pull Requests.
-
-# Dependabot
-
-Dependabot fue configurado para monitorear dependencias del proyecto y generar Pull Requests automáticos cuando existan nuevas versiones o posibles vulnerabilidades.
-
-Esto permite mantener las dependencias actualizadas y mejorar la seguridad del proyecto.
+---
 
 # Seguridad y DevSecOps
 
-## Trivy
+## Análisis de vulnerabilidades con Trivy
 
-Trivy fue integrado dentro del pipeline para realizar análisis de vulnerabilidades sobre la imagen Docker generada.
+Como parte de la estrategia DevSecOps, el pipeline incorpora un análisis automático de vulnerabilidades utilizando **Trivy** antes de realizar el despliegue de la aplicación.
 
-La configuración actual utilizada en Trivy es:
+El análisis se ejecuta sobre la imagen Docker generada durante el proceso de Integración Continua, permitiendo detectar vulnerabilidades conocidas en el sistema operativo base y en las dependencias instaladas.
+
+La configuración utilizada fue la siguiente:
 
 ```yaml
-exit-code: '0'
-severity: CRITICAL,HIGH
+image-ref: microservicio-devops
+format: table
+exit-code: '1'
+severity: CRITICAL
+ignore-unfixed: true
 ```
 
-Esto significa que el pipeline se detiene automáticamente cuando se detectan vulnerabilidades HIGH o CRITICAL.
+Con esta configuración el pipeline finaliza con error cuando se detecta alguna vulnerabilidad clasificada como **CRITICAL**, impidiendo que una imagen insegura sea desplegada en el servidor.
 
-### Evidencia del comportamiento esperado
+La integración de Trivy permitió incorporar controles de seguridad directamente dentro del proceso de CI/CD, siguiendo los principios de DevSecOps y fortaleciendo la calidad del software antes de su publicación.
 
-Durante la ejecución del pipeline se observó que:
+---
 
-* Las pruebas unitarias fueron exitosas.
-* La imagen Docker fue construida correctamente.
-* El escaneo de seguridad bloqueó la ejecución debido a vulnerabilidades detectadas.
+# Beneficios del pipeline implementado
 
-Este comportamiento es esperado y demuestra que la política de seguridad está funcionando correctamente.
+La automatización desarrollada mediante GitHub Actions permitió obtener los siguientes beneficios:
 
-El estado de error no corresponde a una mala configuración del proyecto, sino a una medida de protección implementada mediante prácticas DevSecOps.
+- Validación automática del código en cada actualización.
+- Ejecución automática de pruebas unitarias.
+- Construcción consistente de la imagen Docker.
+- Detección temprana de vulnerabilidades de seguridad.
+- Despliegue automático en Amazon EC2.
+- Reducción de errores manuales durante la publicación.
+- Mayor trazabilidad y confiabilidad del proceso de entrega continua.
 
+## Evidencia del comportamiento esperado
+
+Una vez finalizada la implementación del pipeline de Integración Continua y Despliegue Continuo (CI/CD), se verificó el correcto funcionamiento de todas las etapas definidas en GitHub Actions.
+
+Durante la ejecución del pipeline se comprobó que:
+
+- Las dependencias del proyecto fueron instaladas correctamente.
+- Las pruebas unitarias desarrolladas con PyTest finalizaron exitosamente.
+- La imagen Docker fue construida sin errores.
+- El análisis de seguridad mediante Trivy no detectó vulnerabilidades críticas que impidieran el despliegue.
+- El pipeline estableció correctamente la conexión con la instancia Amazon EC2 mediante SSH.
+- El repositorio fue actualizado automáticamente en el servidor.
+- Se reconstruyó la imagen Docker en la instancia EC2.
+- El contenedor anterior fue reemplazado por la nueva versión del microservicio.
+- La validación del endpoint `/health` confirmó que el servicio quedó disponible después del despliegue.
+
+El resultado exitoso del pipeline demuestra la correcta integración de las prácticas de Integración Continua, Despliegue Continuo y DevSecOps implementadas durante el desarrollo del proyecto.
+
+---
 
 # Evidencias
 
-Se incorporaron capturas de pantalla que demuestran:
+Para respaldar el funcionamiento del proyecto se incorporan las siguientes evidencias obtenidas durante el desarrollo e implementación:
 
-* Ejecución del pipeline en GitHub Actions.
-* Funcionamiento de Docker Compose.
-* Resultado de las pruebas PyTest.
-* Pull Requests generados por Dependabot.
-* Escaneo de seguridad con Trivy.
-* Funcionamiento del microservicio en localhost.
+- Captura del repositorio alojado en GitHub.
+- Captura de las ramas utilizadas durante el desarrollo.
+- Captura del pipeline ejecutándose correctamente en GitHub Actions.
+- Captura de las pruebas unitarias ejecutadas mediante PyTest.
+- Captura del análisis de seguridad realizado con Trivy.
+- Captura del despliegue exitoso en Amazon EC2.
+- Captura del microservicio ejecutándose desde la instancia EC2.
+- Captura del endpoint `http://<IPv4_Publica>:5000/health` respondiendo correctamente.
+- Captura de la página principal del microservicio (`http://<IPv4_Publica>:5000/`).
+- Captura del panel de Amazon CloudWatch mostrando las métricas monitoreadas (CPU, memoria y almacenamiento).
+- Captura del Dashboard de CloudWatch con las métricas de la instancia EC2.
 
 # Uso de Inteligencia Artificial
 
-Se utilizó inteligencia artificial únicamente como apoyo para:
+Durante el desarrollo del proyecto se utilizó inteligencia artificial como herramienta de apoyo para facilitar el aprendizaje y resolver dudas técnicas surgidas durante la implementación.
 
-* Corrección de documentación.
-* Explicación de conceptos DevOps.
-* Resolución de dudas técnicas.
-* Validación de comandos Docker y Git.
+El uso de IA estuvo enfocada principalmente en:
 
-Todas las decisiones técnicas, configuraciones y validaciones fueron realizadas y verificadas por los integrantes del equipo.
+- Explicación de conceptos relacionados con DevOps, CI/CD, Docker, GitHub Actions, AWS y CloudWatch.
+- Resolución de dudas técnicas durante el desarrollo e implementación del proyecto.
+- Apoyo en la corrección de comandos utilizados en PowerShell, Git, Docker y AWS.
+- Orientación para identificar errores y proponer alternativas de solución durante la configuración del pipeline CI/CD.
+- Recordatorio de pasos previamente realizados para mantener la continuidad del desarrollo y facilitar la resolución de problemas.
+- Apoyo en la interpretación de mensajes de error y validación de los resultados obtenidos.
+- Asistencia en la organización y formato de la documentación técnica del proyecto (README).
 
-Capturas:
+La inteligencia artificial fue utilizada únicamente como una herramienta de apoyo al aprendizaje. Todas las configuraciones, pruebas, validaciones, decisiones técnicas y verificaciones finales fueron realizadas por los integrantes del equipo.
 
-### Branches del repositorio
+# Capturas de evidencia
+
+A continuación se presentan las principales evidencias obtenidas durante el desarrollo e implementación del proyecto.
+
+## Branches del repositorio
+
+Se muestra la estrategia de ramificación utilizada durante el desarrollo del proyecto, basada en GitFlow, utilizando las ramas **main** y **develop** para gestionar la integración y el despliegue del microservicio.
 
 ![Branches](capturas/branches.png)
 
-### Commits y trazabilidad
+---
+
+## Commits y trazabilidad
+
+Se presentan los commits realizados durante el desarrollo del proyecto, utilizando la convención **Conventional Commits**, permitiendo mantener un historial organizado y fácilmente trazable.
 
 ![Commits](capturas/commits.png)
 
-### Pipeline CI/CD en GitHub Actions
+---
+
+## Pipeline CI/CD en GitHub Actions
+
+Se evidencia la ejecución satisfactoria del pipeline de Integración Continua y Despliegue Continuo (CI/CD), donde se ejecutan automáticamente las pruebas unitarias, la construcción de la imagen Docker, el análisis de seguridad con Trivy y el despliegue hacia Amazon EC2.
 
 ![Actions](capturas/actions.png)
 
-### Microservicio funcionando en localhost
+---
+
+## Registro del análisis de seguridad con Trivy
+
+Se presenta el resultado del análisis de vulnerabilidades realizado por **Trivy** durante la ejecución del pipeline. Esta evidencia demuestra la integración de controles de seguridad dentro del proceso de CI/CD, siguiendo los principios de DevSecOps.
+
+![Log Trivy](capturas/logtrivy.png)
+
+---
+
+## Microservicio funcionando en entorno local
+
+Se muestra el funcionamiento correcto del microservicio durante la etapa de desarrollo local antes de ser desplegado en la nube.
 
 ![Localhost](capturas/localhost.png)
+
+---
+
+## Instancia Amazon EC2
+
+Se presenta la instancia EC2 utilizada para alojar el microservicio en AWS. En ella se ejecuta el contenedor Docker desplegado automáticamente mediante el pipeline de GitHub Actions.
+
+![Instancia EC2](capturas/instancia-ec2.png)
+---
+
+## Endpoint de estado (/health)
+
+Se verifica el correcto funcionamiento del endpoint `/health`, utilizado para validar que el microservicio se encuentra disponible después del despliegue automático.
+
+![Health](capturas/health.png)
+
+---
+
+## Métricas de Amazon CloudWatch
+
+Se muestran las métricas recopiladas por Amazon CloudWatch para la instancia EC2, incluyendo información de CPU, memoria y almacenamiento, permitiendo supervisar el estado de la infraestructura en tiempo real.
+
+![Métricas CloudWatch](capturas/cloudwatch-metricas.png)
 
 # Conclusiones
 
 ## Integrante 1 - John Zapata
 
-Durante esta evaluación fue posible comprender de manera práctica cómo automatizar un pipeline CI/CD completo utilizando Docker, GitHub Actions y pruebas automatizadas. Además, se logró integrar conceptos de seguridad DevSecOps y orquestación de contenedores mediante Docker Compose.
+Durante el desarrollo de esta evaluación fue posible aplicar de manera práctica los principales conceptos de Ingeniería DevOps mediante la implementación de un pipeline de Integración Continua y Despliegue Continuo (CI/CD). La utilización de GitHub Actions permitió automatizar la ejecución de pruebas, la construcción de imágenes Docker, el análisis de vulnerabilidades con Trivy y el despliegue del microservicio hacia una instancia Amazon EC2. Además, la incorporación de Amazon CloudWatch permitió comprender la importancia del monitoreo de la infraestructura para verificar el estado y rendimiento de los servicios desplegados.
 
 ## Integrante 2 - Constanza Mena
 
-Esta evaluación permitió aplicar conocimientos previos sobre microservicios y complementarlos con herramientas DevOps modernas. La implementación de Docker, PyTest, GitHub Actions, Dependabot, Trivy y Docker Compose ayudó a comprender mejor la automatización, trazabilidad y seguridad dentro del ciclo de desarrollo de software.
+Esta evaluación permitió fortalecer los conocimientos adquiridos durante el semestre mediante la integración de diversas herramientas utilizadas en entornos DevOps reales. La implementación de Docker, PyTest, GitHub Actions, Trivy, Amazon EC2 y Amazon CloudWatch permitió comprender el ciclo completo de automatización del desarrollo de software, desde la validación del código hasta su despliegue y monitoreo en la nube. Asimismo, el trabajo realizado permitió reconocer la importancia de las buenas prácticas de automatización, seguridad y monitoreo para mejorar la calidad y confiabilidad de las aplicaciones.
